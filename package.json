@@ -1,6 +1,6 @@
 {
   "name": "podcast2",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "description": "Podcast RSS feed generator. A really simple API to add Podcast-RSS feeds to any project.",
   "homepage": "http://github.com/artskydj/podcast2",
   "author": "Joseph Dykstra <josephdykstra@gmail.com>",
