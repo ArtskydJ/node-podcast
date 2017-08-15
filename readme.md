@@ -1,4 +1,4 @@
-# Podcast RSS for Node [![Build Status](https://travis-ci.org/artskydj/node-podcast.svg?branch=master)](https://travis-ci.org/artskydj/node-podcast)
+# Podcast RSS for Node [![Build Status](https://travis-ci.org/artskydj/podcast2.svg?branch=master)](https://travis-ci.org/artskydj/podcast2)
 
 > Fast and simple Podcast RSS generator/builder for Node projects. Supports enclosures and GeoRSS.
 
