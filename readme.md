@@ -6,14 +6,14 @@ An updated version of `node-podcast`
 
 ## Install
 
-    $ npm install podcast
+    $ npm install podcast2
 
 ## Usage
 
 ### Create a new feed
 
 ```js
-var Podcast = require('podcast');
+var Podcast = require('podcast2');
 
 var feed = new Podcast(feedOptions);
 ```
@@ -99,7 +99,7 @@ For example you can use `'\t'` for tab character, or `' '` for one-space tabs.
 ## Example Usage
 
 ```js
-var Podcast = require('podcast');
+var Podcast = require('podcast2');
 
 /* lets create an rss feed */
 var feed = new Podcast({
