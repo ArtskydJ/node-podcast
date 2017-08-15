@@ -1,6 +1,8 @@
-# Podcast RSS for Node [![Build Status](https://travis-ci.org/maxnowack/node-podcast.svg)](https://travis-ci.org/maxnowack/node-podcast)
+# Podcast RSS for Node [![Build Status](https://travis-ci.org/artskydj/node-podcast.svg?branch=master)](https://travis-ci.org/artskydj/node-podcast)
 
 > Fast and simple Podcast RSS generator/builder for Node projects. Supports enclosures and GeoRSS.
+
+An updated version of `node-podcast`
 
 ## Install
 
@@ -92,7 +94,7 @@ var xml = feed.xml(indent);
 This returns the XML as a string.
 
 `indent` _optional_ **string** What to use as a tab. Defaults to no tabs (compressed).
- For example you can use `'\t'` for tab character, or `'  '` for two-space tabs.
+For example you can use `'\t'` for tab character, or `' '` for one-space tabs.
 
 ## Example Usage
 
@@ -107,18 +109,18 @@ var feed = new Podcast({
     site_url: 'http://example.com',
     image_url: 'http://example.com/icon.png',
     docs: 'http://example.com/rss/docs.html',
-    author: 'Dylan Greene',
-    managingEditor: 'Dylan Greene',
-    webMaster: 'Dylan Greene',
-    copyright: '2013 Dylan Greene',
+    author: 'Joseph Dykstra',
+    managingEditor: 'Joseph Dykstra',
+    webMaster: 'Joseph Dykstra',
+    copyright: '2013 Joseph Dykstra',
     language: 'en',
     categories: ['Category 1','Category 2','Category 3'],
     pubDate: 'May 20, 2012 04:00:00 GMT',
     ttl: '60',
-    itunesAuthor: 'Max Nowack',
+    itunesAuthor: 'Joseph Dykstra',
     itunesSubtitle: 'I am a sub title',
     itunesSummary: 'I am a summary',
-    itunesOwner: { name: 'Max Nowack', email:'max@unsou.de' },
+    itunesOwner: { name: 'Joseph Dykstra', email:'example@example.com' },
     itunesExplicit: false,
     itunesCategory: {
         "text": "Entertainment",
@@ -141,7 +143,7 @@ feed.item({
     lat: 33.417974, //optional latitude field for GeoRSS
     long: -111.933231, //optional longitude field for GeoRSS
     enclosure : {url:'...', file:'path-to-file'}, // optional enclosure
-    itunesAuthor: 'Max Nowack',
+    itunesAuthor: 'Joseph Dykstra',
     itunesExplicit: false,
     itunesSubtitle: 'I am a sub title',
     itunesSummary: 'I am a summary',
@@ -155,7 +157,7 @@ var xml = feed.xml();
 
 ## Tests
 
-Tests included use Mocha. Use `npm test` to run the tests.
+Tests included use Tape. Use `npm test` to run the tests.
 
     $ npm test
 
@@ -164,39 +166,10 @@ Tests included use Mocha. Use `npm test` to run the tests.
  * This module is very fast but you might as well cache the output of xml() and serve
  it until something changes.
 
-# History
+## Credit / License
 
-I started this module over two years ago (April 2011) because there weren't any Node modules
-for creating RSS. Besides these [25 modules](https://npmjs.org/browse/depended/rss)
-I would love to know what other projects are using it.
+I forked the `node-podcast` module, because it wasn't passing its tests, and the install was failing.
 
-# Contributing
+[Original Repository License](https://github.com/maxnowack/node-podcast#license)
 
-Contributions to the project are welcome. Feel free to fork and improve.
-I do my best accept pull requests in a timely manor, especially when tests and updated docs
-are included.
-
-# License
-
-(The MIT License)
-
-Copyright (c) 2011-2013 Dylan Greene <dylang@gmail.com>
-
-Permission is hereby granted, free of charge, to any person obtaining
-a copy of this software and associated documentation files (the
-'Software'), to deal in the Software without restriction, including
-without limitation the rights to use, copy, modify, merge, publish,
-distribute, sublicense, and/or sell copies of the Software, and to
-permit persons to whom the Software is furnished to do so, subject to
-the following conditions:
-
-The above copyright notice and this permission notice shall be
-included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND,
-EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
-CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
-TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
-SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+[MIT](https://choosealicense.com/licenses/mit)
