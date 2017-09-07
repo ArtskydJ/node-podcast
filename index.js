@@ -1,116 +1,143 @@
-var RSS = require('rss')
+const RSS = require('rss')
 
-function Podcast (options, items) {
-	options = options || {}
+module.exports = function makePodcast(inputOptions = {}, inputItems = []) {
+	const options = makeOptionsObjectFromInput(inputOptions)
 
-	this.title          = options.title || 'Untitled Podcast Feed'
-	this.description    = options.description || ''
-	this.generator      = options.generator || 'Podcast for Node'
-	this.feed_url       = options.feed_url
-	this.site_url       = options.site_url
-	this.image_url      = options.image_url
-	this.author         = options.author
-	this.categories     = options.categories
-	this.pubDate        = options.pubDate
-	this.docs           = options.docs
-	this.copyright      = options.copyright
-	this.language       = options.language
-	this.managingEditor = options.managingEditor
-	this.webMaster      = options.webMaster
-	this.ttl            = options.ttl
-	this.geoRSS         = options.geoRSS || false
+	const items = inputItems.map(transformItem)
 
-	this.custom_namespaces = {
-		'itunes': 'http://www.itunes.com/dtds/podcast-1.0.dtd'
+	return new RSS(options, items).xml({
+		indent: inputOptions.indent ? '\t' : false,
+	})
+}
+
+const inputFeedOptionsToPassToRss = [ 'title', 'description', 'generator', 'feed_url', 'site_url', 'image_url', 'author', 'categories', 'pubDate', 'docs', 'copyright', 'language', 'managingEditor', 'webMaster', 'ttl', 'geoRSS' ]
+const inputItemOptionsToPassToRss = [ 'title', 'description', 'url', 'guid', 'categories', 'author', 'date', 'lat', 'long', 'enclosure' ]
+
+function makeOptionsObjectFromInput(inputOptions) {
+	const options = Object.assign({
+		title: 'Untitled Podcast Feed',
+		description: '',
+		generator: 'Podcast for Node',
+		geoRSS: false,
+		custom_namespaces: {
+			itunes: 'http://www.itunes.com/dtds/podcast-1.0.dtd',
+		},
+		custom_elements: feedCustomElementsFromInput(inputOptions),
+	}, copyJust(inputOptions, inputFeedOptionsToPassToRss))
+
+	return options
+}
+
+function feedCustomElementsFromInput(inputOptions) {
+	const itunesOwner = inputOptions.itunesOwner || { name: inputOptions.author || '', email: '' }
+
+	const customElements = []
+
+	if (inputOptions.itunesAuthor || inputOptions.author) {
+		customElements.push({ 'itunes:author': inputOptions.itunesAuthor || inputOptions.author })
+	}
+	if (inputOptions.itunesSubtitle) {
+		customElements.push({ 'itunes:subtitle': inputOptions.itunesSubtitle })
+	}
+	if (inputOptions.itunesSummary || inputOptions.description) {
+		customElements.push({ 'itunes:summary': inputOptions.itunesSummary || inputOptions.description })
 	}
 
-	options.itunesOwner = options.itunesOwner || {"name":options.author || "","email":""}
+	customElements.push({ 'itunes:owner': [{ 'itunes:name': itunesOwner.name }, { 'itunes:email': itunesOwner.email }] })
 
-	this.custom_elements = []
+	customElements.push({ 'itunes:explicit': (inputOptions.itunesExplicit || false) ? 'Yes' : 'No' })
 
-	if(options.itunesAuthor || options.author) this.custom_elements.push({'itunes:author':    options.itunesAuthor || options.author})
-	if(options.itunesSubtitle) this.custom_elements.push({'itunes:subtitle':  options.itunesSubtitle})
-	if(options.itunesSummary || options.description) this.custom_elements.push({'itunes:summary':   options.itunesSummary || options.description})
-	if(options.itunesOwner) this.custom_elements.push({'itunes:owner':     [{'itunes:name':options.itunesOwner.name},{'itunes:email':options.itunesOwner.email}]}) // {name:String, email:String}
-	this.custom_elements.push({'itunes:explicit':  (options.itunesExplicit || false) ? 'Yes' : 'No'})
+	if (inputOptions.itunesCategory) {
+		customElements.push(...buildiTunesCategories(inputOptions.itunesCategory))
+	}
 
-	if(options.itunesCategory) {
-		var self = this
-		var categories = buildiTunesCategories(options.itunesCategory) // [{text:String, subcats:[{text:String, subcats:Array}]}]
-		categories.forEach(function(category){
-			self.custom_elements.push(category)
+	if (inputOptions.itunesImage || inputOptions.image_url) {
+		customElements.push({
+			'itunes:image': {
+				_attr: {
+					href: inputOptions.itunesImage || inputOptions.image_url,
+				},
+			},
 		})
 	}
 
-	if(options.itunesImage || options.image_url) this.custom_elements.push({'itunes:image': {
-		_attr: {
-			href: options.itunesImage || options.image_url
-		}
-	}})
-
-	this.items = []
-
-	this.item = function (options) {
-		options = options || {}
-		var item = {
-			title:          options.title || 'No title',
-			description:    options.description || '',
-			url:            options.url,
-			guid:           options.guid,
-			categories:     options.categories || [],
-			author:         options.author,
-			date:           options.date,
-			lat:            options.lat,
-			long:           options.long,
-			enclosure:      options.enclosure || false,
-			custom_elements: []
-		}
-
-		if(options.itunesAuthor || options.author) item.custom_elements.push({'itunes:author':    options.itunesAuthor || options.author})
-		if(options.itunesSubtitle) item.custom_elements.push({'itunes:subtitle':  options.itunesSubtitle})
-		if(options.itunesSummary || options.description) item.custom_elements.push({'itunes:summary':   options.itunesSummary || options.description})
-		item.custom_elements.push({'itunes:explicit':  (options.itunesExplicit || false) ? 'Yes' : 'No'})
-		if(options.itunesDuration) item.custom_elements.push({'itunes:duration':  options.itunesDuration})
-		if(options.itunesKeywords) item.custom_elements.push({'itunes:keywords':  [ options.itunesKeywords.join(',') ]})
-		if(options.itunesImage || options.image_url) item.custom_elements.push({'itunes:image': {
-			_attr: {
-				href: options.itunesImage || options.image_url
-			}
-		}})
-
-		this.items.push(item)
-		return this
-	}
-
-	this.items.forEach(function(item){
-		this.item(item)
-	})
-
-	this.xml = function(indent) {
-		var rss = new RSS(this, this.items)
-		return rss.xml(indent)
-	}
+	return customElements
 }
 
 function buildiTunesCategories(categories) {
-	var arr = []
-	if(Array.isArray(categories)) {
-		categories.forEach(function(category) {
-			if(category.subcats) {
-				var elements = [
-					{ _attr: { text: category.text } }
-				]
-				var cats = buildiTunesCategories(category.subcats)
-				cats.forEach(function(cat){
-					elements.push(cat)
-				})
-				arr.push({'itunes:category': elements})
-			} else {
-				arr.push({'itunes:category': { _attr: {text: category.text }}})
-			}
-		})
+	if (!Array.isArray(categories)) {
+		return []
 	}
-	return arr
+
+	return categories.map(function(category) {
+		if (category.subcats) {
+			return {
+				'itunes:category': [
+					{ _attr: { text: category.text } },
+					...buildiTunesCategories(category.subcats),
+				],
+			}
+		} else {
+			return {
+				'itunes:category': {
+					_attr: { text: category.text },
+				},
+			}
+		}
+	})
 }
 
-module.exports = Podcast
+function transformItem(inputItem) {
+	return Object.assign({
+		title: 'No title',
+		description: '',
+		categories: [],
+		enclosure: false,
+		custom_elements: itemCustomElementsFromInput(inputItem),
+	}, copyJust(inputItem, inputItemOptionsToPassToRss))
+}
+
+function itemCustomElementsFromInput(inputItem) {
+	const customElements = []
+
+	if (inputItem.itunesAuthor || inputItem.author) {
+		customElements.push({ 'itunes:author': inputItem.itunesAuthor || inputItem.author })
+	}
+	if (inputItem.itunesSubtitle) {
+		customElements.push({ 'itunes:subtitle': inputItem.itunesSubtitle })
+	}
+	if (inputItem.itunesSummary || inputItem.description) {
+		customElements.push({ 'itunes:summary': inputItem.itunesSummary || inputItem.description })
+	}
+
+	customElements.push({ 'itunes:explicit': (inputItem.itunesExplicit || false) ? 'Yes' : 'No' })
+
+	if (inputItem.itunesDuration) {
+		customElements.push({ 'itunes:duration': inputItem.itunesDuration })
+	}
+	if (inputItem.itunesKeywords) {
+		customElements.push({ 'itunes:keywords': [ inputItem.itunesKeywords.join(',') ] })
+	}
+	if (inputItem.itunesImage || inputItem.image_url) {
+		customElements.push({
+			'itunes:image': {
+				_attr: {
+					href: inputItem.itunesImage || inputItem.image_url,
+				},
+			},
+		})
+	}
+
+	return customElements
+}
+
+function copyJust(object = {}, keys) {
+	const output = {}
+	keys
+		.filter(key => typeof object[key] !== 'undefined')
+		.forEach(key => {
+			output[key] = object[key]
+		})
+
+	return output
+}

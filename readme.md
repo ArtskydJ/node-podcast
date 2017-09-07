@@ -42,6 +42,7 @@ var feed = new Podcast(feedOptions);
  * `itunesExplicit` _optional_ **boolean** (iTunes specific) specifies if the podcast contains explicit content
  * `itunesCategory` _optional_ **array of objects** (iTunes specific) Categories for iTunes ( [{text:String, subcats:[{text:String, subcats:Array}]}] )
  * `itunesImage` _optional_ **string** (iTunes specific) link to an image for the podcast
+ * `indent` _optional_ **boolean** Whether or not the output should be indented with a tab
 
 ### Add items to a feed
 
