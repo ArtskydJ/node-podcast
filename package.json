@@ -1,6 +1,6 @@
 {
   "name": "podcast2",
-  "version": "0.3.0",
+  "version": "1.0.0",
   "description": "Podcast RSS feed generator. A really simple API to add Podcast-RSS feeds to any project.",
   "homepage": "http://github.com/ArtskydJ/node-podcast2",
   "author": "Joseph Dykstra <josephdykstra@gmail.com>",
