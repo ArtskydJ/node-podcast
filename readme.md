@@ -14,7 +14,7 @@ npm install podcast2
 
 ### Create a new feed
 
-```
+```js
 const podcast = require('podcast2')
 
 const feedXml = podcast(feedOptions, feedItems)
