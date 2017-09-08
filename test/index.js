@@ -1,27 +1,32 @@
-var fs = require('fs')
-var path = require('path')
-var test = require('tape')
-var Podcast = require('..')
+const fs = require('fs')
+const path = require('path')
+const test = require('tape')
+const makePodcast = require('..')
 
-var expectedOutputDefault = getExpectedOutput('default')
-var expectedOutputDefaultOneItem = getExpectedOutput('defaultOneItem')
-var expectedOutputPodcast = getExpectedOutput('podcast')
+const expectedOutputDefault = getExpectedOutput('default')
+const expectedOutputDefaultOneItem = getExpectedOutput('defaultOneItem')
+const expectedOutputPodcast = getExpectedOutput('podcast')
 
 // Dates in XML files will always be this value.
 require('mockdate').set('Wed, 10 Dec 2014 19:04:57 GMT')
 
 test('empty feed', function(t) {
-	t.plan(2)
-	var feed = new Podcast()
-	t.equal(feed.xml(), expectedOutputDefault)
-	feed.item()
-	t.equal(feed.xml(), expectedOutputDefaultOneItem)
+	t.plan(1)
+	const xml = makePodcast()
+	t.equal(xml, expectedOutputDefault)
+})
+
+test('feed with one item', t => {
+	t.plan(1)
+	const xml = makePodcast({}, [{}])
+	t.equal(xml, expectedOutputDefaultOneItem)
 })
 
 test('podcast', function(t) {
 	t.plan(1)
 
-	var feed = new Podcast({
+	const xml = makePodcast({
+		indent: true,
 		title: 'title',
 		description: 'description',
 		feed_url: 'http://example.com/rss.xml',
@@ -35,7 +40,7 @@ test('podcast', function(t) {
 		itunesSummary: 'All About Everything is a show about everything. Each week we dive into any subject known to man and talk about it as much as we can. Look for our podcast in the Podcasts app or in the iTunes Store',
 		itunesOwner: {
 			name: 'John Doe',
-			email: 'john.doe@example.com'
+			email: 'john.doe@example.com',
 		},
 		itunesImage: 'http://example.com/podcasts/everything/AllAboutEverything.jpg',
 		itunesCategory: [{
@@ -43,13 +48,11 @@ test('podcast', function(t) {
 			subcats: [{
 				text: 'Software',
 				subcats: [{
-					text: 'node.js'
-				}]
-			}]
+					text: 'node.js',
+				}],
+			}],
 		}],
-	})
-
-	feed.item({
+	}, [{
 		title: 'item 1',
 		description: 'description 1',
 		url: 'http://example.com/article1',
@@ -57,13 +60,13 @@ test('podcast', function(t) {
 		itunesAuthor: 'John Doe',
 		itunesSubtitle: 'A short primer on table spices',
 		itunesImage: 'http://example.com/podcasts/everything/AllAboutEverything/Episode1.jpg',
-		itunesDuration: '7:04'
-	})
+		itunesDuration: '7:04',
+	}])
 
-	t.equal(feed.xml({indent: true}), expectedOutputPodcast)
+	t.equal(xml, expectedOutputPodcast)
 })
 
 function getExpectedOutput(fileBaseName) {
-	var filePath = path.join(__dirname, 'expectedOutput', fileBaseName + '.xml')
+	const filePath = path.join(__dirname, 'expectedOutput', fileBaseName + '.xml')
 	return fs.readFileSync(filePath, 'utf-8').trim()
 }
