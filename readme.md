@@ -50,7 +50,7 @@ const feedXml = podcast(feedOptions, feedItems)
 * `itunesImage` _optional_ **string** (iTunes specific) link to an image for the podcast
 * `indent` _optional_ **boolean** Whether or not the output should be indented with a tab
 
-#### feedItems
+#### `feedItems`
 
 An array of any number of item objects.
 
@@ -115,7 +115,7 @@ const xml = podcast({
     itunesCategory: {
         "text": "Entertainment",
         "subcats": [{
-          "text": "Television"
+            "text": "Television"
         }]
     },
     itunesImage: 'http://link.to/image.png'
