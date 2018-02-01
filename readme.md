@@ -84,7 +84,6 @@ if the content should be presented as unread.
 * `itunesSubtitle` _optional_  **string** (iTunes specific) subtitle for iTunes listing
 * `itunesSummary` _optional_  **string** (iTunes specific) summary for iTunes listing
 * `itunesDuration` _optional_ **number** (iTunes specific) duration of the podcast item in seconds
-* `itunesKeywords` _optional_ **array of string** (iTunes specific) keywords of the podcast
 * `itunesImage` _optional_ **string** (iTunes specific) link to an image for the item
 
 ## Example Usage
