@@ -115,9 +115,6 @@ function itemCustomElementsFromInput(inputItem) {
 	if (inputItem.itunesDuration) {
 		customElements.push({ 'itunes:duration': inputItem.itunesDuration })
 	}
-	if (inputItem.itunesKeywords) {
-		customElements.push({ 'itunes:keywords': [ inputItem.itunesKeywords.join(',') ] })
-	}
 	if (inputItem.itunesImage || inputItem.image_url) {
 		customElements.push({
 			'itunes:image': {
